@@ -1,28 +1,27 @@
 provider "google" {
- project = "my-project-sudheeksha"  
- region  = "us-central1" 
- credentials = "keys.json"
+ project = var.project_id
+ region  = var.region
+ credentials = var.credentials_file
 }
 resource "google_compute_network" "vpc_network" {
- name                    = "vpc-network"
- auto_create_subnetworks = false
+ name                    = var.vpc_network_name
 }
  
 resource "google_compute_subnetwork" "my_subnet" {
- name          = "my-subnet"
- ip_cidr_range = "10.10.10.0/24" 
+ name          = var.subnetwork_name
+ ip_cidr_range = var.subnetwork_ip_cidr_range
  network       = google_compute_network.vpc_network.id
  region        = "us-central1"
 }
  
 
 resource "google_compute_instance" "my_instance" {
- name         = "my-instance"
- machine_type = "e2-medium"
- zone         = "us-central1-a"
+ name         = var.compute_instance_name
+ machine_type = var.compute_instance_machine_type
+ zone         = var.compute_instance_zone
  boot_disk {
    initialize_params {
-     image = "debian-cloud/debian-11" 
+     image = var.compute_instance_image
    }
  }
  network_interface {
