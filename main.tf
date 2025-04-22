@@ -1,42 +1,25 @@
 provider "google" {
- project = var.project_id
- region  = var.region
- credentials = var.credentials_file
+ project = "my-project-sudheeksha"
+ region  = "us-central1"
+ credentials = "keys.json"
 }
-locals {
-  setup_name = "terraform"
+data "google_compute_network" "default_network" {
+  name = "default"
 }
-resource "google_compute_network" "vpc_network" {
- name                    = var.vpc_network_name
-}
- 
-resource "google_compute_subnetwork" "my_subnet" {
- name          = var.subnetwork_name
- ip_cidr_range = var.subnetwork_ip_cidr_range
- network       = google_compute_network.vpc_network.id
- region        = "us-central1"
-}
- 
 
 resource "google_compute_instance" "my_instance" {
- name         = var.compute_instance_name
- machine_type = var.compute_instance_machine_type
- zone         = var.compute_instance_zone
- tags = [local.setup_name]
+ name         = "my-instance"
+ machine_type = "e2-micro"
+ zone         = "us-central1-a"
  
  boot_disk {
    initialize_params {
-     image = var.compute_instance_image
-   }
- }
- network_interface {
-   network    = google_compute_network.vpc_network.id
-   subnetwork = google_compute_subnetwork.my_subnet.id
-   access_config {
-     
-   }
- }
+     image = "debian-cloud/debian-11"
+    }
 }
-output "private_ip" {
-    value = google_compute_instance.my_instance.network_interface.0.network_ip
+ network_interface {
+   network = data.google_compute_network.default_network.id
+   access_config {}
+   }
+
 }
