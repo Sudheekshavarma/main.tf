@@ -1,22 +1,22 @@
 provider "google" {
- project = "my-project-sudheeksha"
- region  = "us-central1"
- credentials = "keys.json"
+ project = var.project
+ region  = var.region
+ credentials = var.credentials
 }
-resource "google_compute_instance" "my_instance" {
-  count        = 4
-  name         = "terraform-${count.index}"
-  machine_type = "e2-micro"
-  zone         = "us-central1-a"
+resource "google_compute_instance" "gcp_instance" {
+  count        = var.instance_count
+  name         = "dxchyd-${count.index}"
+  machine_type = var.machine_type
+  zone         = var.zone
  
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = var.image
     }
   }
  
   network_interface {
-    network = "default"
+    network = var.network
     access_config {}    
   }
  
